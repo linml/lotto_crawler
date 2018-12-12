@@ -1,6 +1,7 @@
 # coding: utf8
 
 from base.db_popl import query_for_list, update, insert_many, query_for_dict
+from util.lru import lru_cache_function
 from util.utils import get_time_string, get_int
 
 
@@ -91,6 +92,34 @@ def db_find_result(lotto_id, count):
     count = get_int(count)
     query_sql = "SELECT issue, draw_number FROM lotto_result_{} WHERE status=1 ORDER BY issue DESC LIMIT %s".format(lotto_id)
     return query_for_list(query_sql, count)
+
+
+@lru_cache_function(100, 60 * 5)
+def lru_db_find_lotto_push(params):
+    query_sql = "SELECT * FROM lotto_push WHERE 1=1 "
+    if params.get("id"):
+        query_sql += " AND id=%(id)s "
+    if params.get("status"):
+        query_sql += " AND status=%(status)s "
+    return query_for_list(query_sql, params)
+
+
+def db_find_lotto_push(params):
+    query_sql = "SELECT * FROM lotto_push WHERE 1=1 "
+    if params.get("id"):
+        query_sql += " AND id=%(id)s "
+    if params.get("status"):
+        query_sql += " AND status=%(status)s "
+    return query_for_list(query_sql, params)
+
+
+def db_find_result(lotto_id, params):
+    query_sql = "SELECT * FROM lotto_result_{} WHERE 1=1 ".format(lotto_id)
+    if params.get("issue"):
+        query_sql += " AND issue=%(issue)s "
+    if params.get("status"):
+        query_sql += " AND status=%(status)s "
+    return query_for_list(query_sql, params)
 
 
 if __name__ == '__main__':

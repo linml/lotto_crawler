@@ -8,7 +8,8 @@ from tornado.ioloop import IOLoop
 from traceback import format_exc
 
 from dao import db_get_last_issue_info, db_draw_result, db_get_next_issue_info, db_find_code_lotto, \
-    db_find_lotto_parser_url
+    db_find_lotto_parser_url, db_find_result
+from push import notice_lotto_result
 from parser import ParserBase, get_parser_handler
 from util.log import info
 from util.utils import gen_random_string, get_html, get_time_string, get_host, get_int, get_string, get_datetime
@@ -312,8 +313,10 @@ class LottoBase(object):
     def save_data(self, data_list):
         for data in data_list:
             issue = data[0]
-            number = data[1]
-            db_draw_result(self.lotto_id, issue, number, self.url)
+            numbers = data[1]
+            if not db_find_result(self.lotto_id, {"issue": issue, "status": 1}) and db_find_result(self.lotto_id, {"issue": issue}):
+                notice_lotto_result(self.lotto_id, issue, numbers)
+            db_draw_result(self.lotto_id, issue, numbers, self.url)
 
     @coroutine
     def run(self):
