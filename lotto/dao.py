@@ -1,7 +1,7 @@
 # coding: utf8
 
 from base.db_popl import query_for_list, update, insert_many, query_for_dict
-from util.utils import get_time_string
+from util.utils import get_time_string, get_int
 
 
 def db_gen_issue_table(lotto_id):
@@ -86,5 +86,13 @@ def db_find_lotto_parser_url(params=None):
     return query_for_list(query_sql, params)
 
 
+def db_find_result(lotto_id, count):
+    lotto_id = get_int(lotto_id)
+    count = get_int(count)
+    query_sql = "SELECT issue, draw_number FROM lotto_result_{} WHERE status=1 ORDER BY issue DESC LIMIT %s".format(lotto_id)
+    return query_for_list(query_sql, count)
+
+
 if __name__ == '__main__':
-    print db_gen_issue_table(1)
+    # print db_gen_issue_table(1)
+    print db_find_result(1, 10)

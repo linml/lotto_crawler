@@ -87,8 +87,6 @@ class ParserHtml_fc3d_gov(ParserBase):
             print e
 
         handler_data.sort(key=lambda x: x[0])
-        for d in handler_data:
-            print d
         return handler_data
 
 

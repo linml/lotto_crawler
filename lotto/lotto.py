@@ -10,7 +10,12 @@ from traceback import format_exc
 from dao import db_get_last_issue_info, db_draw_result, db_get_next_issue_info, db_find_code_lotto, \
     db_find_lotto_parser_url
 from parser import ParserBase, get_parser_handler
+from util.log import info
 from util.utils import gen_random_string, get_html, get_time_string, get_host, get_int, get_string, get_datetime
+
+
+def check_lotto(lotto_id):
+    return get_int(lotto_id) in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40]
 
 
 def filter_lotto_data(lotto_id, data_list):
@@ -321,17 +326,17 @@ class LottoBase(object):
             data_list = self.parser_data(html)
             data_list = filter_lotto_data(self.lotto_id, data_list)
 
-            msg = ""
+            msg = "{0}=>".format(get_string(self.lotto_name))
             if data_list:
                 self.refresh_last_issue()
                 self.save_data(data_list)
                 crawler_last_issue = max(data_list, key=lambda x: x[0])[0]
                 if self.last_issue.issue >= crawler_last_issue:
-                    msg = "已有最新期号:{}".format(self.last_issue.issue)
+                    msg += "已有最新期号:{}".format(self.last_issue.issue)
                 else:
-                    msg = "更新最新:{}".format(crawler_last_issue)
+                    msg += "更新最新:{}".format(crawler_last_issue)
             else:
-                msg = "无数据,最后{}期".format(self.last_issue.issue)
+                msg += "无数据,最后{}期".format(self.last_issue.issue)
 
             now = datetime.now()
             self.refresh_last_issue()
@@ -343,7 +348,7 @@ class LottoBase(object):
 
                 msg += ";下一期{}期将在{}开奖".format(self.next_issue.issue, self.next_issue.result_time)
             msg += ";系统%s秒后采集" % interval
-            print msg
+            info(msg)
         except Exception as e:
             print format_exc()
             print e

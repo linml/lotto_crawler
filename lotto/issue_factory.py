@@ -233,7 +233,7 @@ def gen_lotto_issue():
                 break
             d += timedelta(days=1)
 
-            print db_insert_issue_many(lotto_info.get("lotto_id"), issue_list)
+            db_insert_issue_many(lotto_info.get("lotto_id"), issue_list)
 
 
 if __name__ == '__main__':
