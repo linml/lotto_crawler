@@ -13,6 +13,7 @@ class IssueFactory(object):
     IssueType4 = 4  # 每天期号在同一天, 时间间隔相同, 期号永久累计自增
     IssueType5 = 5  # 每天一期, 春节不开奖
     IssueType6 = 6  # 每天期号在同一天, 时间间隔不相同 重庆彩
+    IssueType7 = 7  # 每天期号在同一天, 时间间隔不相同 重庆农场
 
     def __init__(self):
         self.lotto_id = 0
@@ -202,6 +203,27 @@ class IssueFactory(object):
                 else:
                     lock_time = get_time_string(d - timedelta(seconds=25))
 
+                issue = get_date_string(day_date) + '%03d' % index
+                data.append([self.lotto_id, issue, start_time, lock_time, end_time, end_time[:8]])
+                start_time = end_time
+            return data
+        elif self.issue_type == self.IssueType7:
+
+            if CP.spring_first <= day_date < CP.spring_last:
+                return data
+
+            d = datetime.combine(day_date, time(0, 0)) - timedelta(minutes=8)
+
+            start_time = get_time_string(d)
+            for index in range(1, 98):
+                if 14 == index:
+                    d = datetime.combine(day_date, time(10, 2))
+                else:
+                    d += timedelta(minutes=10)
+
+                end_time = get_time_string(d)
+
+                lock_time = get_time_string(d - timedelta(seconds=90))
                 issue = get_date_string(day_date) + '%03d' % index
                 data.append([self.lotto_id, issue, start_time, lock_time, end_time, end_time[:8]])
                 start_time = end_time

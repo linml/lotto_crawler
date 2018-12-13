@@ -94,9 +94,9 @@ class ParserHtml_ssc_500(ParserBase):
         return handler_data
 
 
-class ParserHtml_ssc_opencai(ParserBase):
+class ParserHtml_opencai_normal(ParserBase):
     """
-    时时彩
+    通用
     开奖通
     http://r.apiplus.net/newly.do?token=a6f237da9e631cff84e062a8be7d36a8&code=cqssc&rows=20&format=json
     """
