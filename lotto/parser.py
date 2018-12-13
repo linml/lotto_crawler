@@ -4,10 +4,14 @@ import json
 import requests
 from bs4 import BeautifulSoup
 
+from util.log import warn
 from util.utils import get_string
 
 
 class ParserBase(object):
+    def __init__(self):
+        self.name = ""
+
     def analyze(self, html):
         issue = ""
         number = ""
@@ -23,8 +27,6 @@ class ParserHtml_ssc_wangyi(ParserBase):
     网易
     http://caipiao.163.com/award/cqssc/
     """
-    def __init__(self):
-        self.name = ""
 
     def analyze(self, html):
         find_string1 = r'<table width="100%" border="0" cellspacing="0" class="awardList">'
@@ -51,8 +53,8 @@ class ParserHtml_ssc_wangyi(ParserBase):
                     if len(number) != 9:
                         continue
                     handler_data.append([issue, number])
-                except:
-                    pass
+                except Exception as e:
+                    warn("{}:{}".format(get_string(self.name), get_string(e)))
         handler_data.sort(key=lambda x: x[0])
         return handler_data
 
@@ -63,8 +65,6 @@ class ParserHtml_ssc_500(ParserBase):
     500
     https://m.500.com/info/kaijiang/ssc/
     """
-    def __init__(self):
-        self.name = ""
 
     def analyze(self, html):
         find_string1 = r'<ul class="info-table">'
@@ -100,8 +100,6 @@ class ParserHtml_opencai_normal(ParserBase):
     开奖通
     http://r.apiplus.net/newly.do?token=a6f237da9e631cff84e062a8be7d36a8&code=cqssc&rows=20&format=json
     """
-    def __init__(self):
-        self.name = ""
 
     def analyze(self, html):
         handler_data = []
@@ -113,7 +111,7 @@ class ParserHtml_opencai_normal(ParserBase):
                 number = result["opencode"]
                 handler_data.append([issue, number])
         except Exception, e:
-            print e
+            warn("{}:{}".format(get_string(self.name), get_string(e)))
 
         handler_data.sort(key=lambda x: x[0])
         return handler_data
@@ -125,8 +123,6 @@ class ParserHtml_fc3d_gov(ParserBase):
     中国福利彩票
     http://www.cwl.gov.cn/cwl_admin/kjxx/findDrawNotice?name=3d&issueCount=30
     """
-    def __init__(self):
-        self.name = ""
 
     def headers(self):
         return {
@@ -146,8 +142,7 @@ class ParserHtml_fc3d_gov(ParserBase):
                 number = result["red"]
                 handler_data.append([issue, number])
         except Exception, e:
-            print e
-
+            warn("{}:{}".format(get_string(self.name), get_string(e)))
         handler_data.sort(key=lambda x: x[0])
         return handler_data
 

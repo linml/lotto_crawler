@@ -231,6 +231,8 @@ class LottoBase(object):
         self.set_url_status(params.get('url_status'))
 
         self.parser_obj = get_parser_handler(self.parser_name)
+        if self.parser_obj:
+            self.parser_obj.name = self.lotto_name
         self.work_id = self.gen_work_id()
 
         self.last_issue = IssueInfo()
