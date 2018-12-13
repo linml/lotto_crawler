@@ -19,162 +19,122 @@ def check_lotto(lotto_id):
     return get_int(lotto_id) in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40]
 
 
+def format_number(lotto_id, numbers):
+    """
+        1   重庆时时彩
+        2   新疆时时彩
+        3   天津时时彩
+        4   分分彩
+        5   两分彩
+        6   三分彩
+        7   五分彩
+        8   山东11选5
+        9   江西11选5
+        10  广东11选5
+        11  江苏11选5
+        12  安徽11选5
+        13  山西11选5
+        14  上海11选5
+        15  分分11选5
+        16  江苏快3
+        17  安徽快3
+        18  湖北快3
+        19  河南快3
+        20  江苏骰宝
+        21  分分快3
+        22  北京PK10
+        23  幸运飞艇
+        24  分分PK10
+        25  福彩3D
+        26  排列3
+        27  排列5
+        28  广东快乐十分
+        29  重庆快乐十分
+        30  天津快乐十分
+        31  北京快乐8
+        32  加拿大基诺
+        33  分分快乐彩
+        34  台湾宾果
+        35  北京幸运28
+        36  加拿大幸运28
+        37  台湾幸运28
+        38  香港六合彩
+        39  五分六合彩
+        40  十分六合彩
+        :param data_list:
+        :return:
+        """
+    number_list = numbers.split(',')
+    for num in number_list:
+        if len(num) == 0 or (not num.isdigit()):
+            return ''
+        n = int(num)
+        if lotto_id in (1, 2, 3, 4, 5, 6, 7,):  # 0-9 时时彩
+            if len(number_list) != 5:
+                return ''
+            if not (0 <= n <= 9):
+                return ''
+        elif lotto_id in (8, 9, 10, 11, 12, 13, 14, 15,):  # 1-11 11选5
+            if len(number_list) != 5:
+                return ''
+            if not (1 <= n <= 11):
+                return ''
+        elif lotto_id in (16, 17, 18, 19, 20, 21,):  # 1-6 快三
+            if len(number_list) != 3:
+                return ''
+            if not (1 <= n <= 6):
+                return ''
+        elif lotto_id in (22, 23, 24, ):  # 1-10 pk10
+            if len(number_list) != 10:
+                return ''
+            if not (1 <= n <= 10):
+                return ''
+        elif lotto_id in (25, 26,):  # 0-9 福彩3D
+            if len(number_list) != 3:
+                return ''
+            if not (0 <= n <= 9):
+                return ''
+        elif lotto_id in (27,):  # 0-9  排列5
+            if len(number_list) != 5:
+                return ''
+            if not (0 <= n <= 9):
+                return ''
+        elif lotto_id in (28, 29, 30, ):  # 1-20 农场
+            if len(number_list) != 8:
+                return ''
+            if not (1 <= n <= 20):
+                return ''
+        elif lotto_id in (31, 32, 33, 34, ):  # 1-80 keno
+            if len(number_list) != 20:
+                return ''
+            if not (1 <= n <= 80):
+                return ''
+        elif lotto_id in (38, 39, 40, ):  # 1-49
+            if len(number_list) != 7:
+                return ''
+            if not (1 <= n <= 49):
+                return ''
+
+        ret = ''
+        if lotto_id in (1, 2, 3, 4, 5, 6, 7, 16, 17, 18, 19, 20, 21, 25, 26, 27,):
+            ret = ','.join(['%d' % int(n) for n in number_list])
+        elif lotto_id in (8, 9, 10, 11, 12, 13, 14, 15, 22, 23, 24, 28, 29, 30, 31, 32, 33, 34, 38, 39, 40, ):
+            ret = ','.join(['%02d' % int(n) for n in number_list])
+        return ret
+
+
 def filter_lotto_data(lotto_id, data_list):
-    """
-    1   重庆时时彩
-    2   新疆时时彩
-    3   天津时时彩
-    4   分分彩
-    5   两分彩
-    6   三分彩
-    7   五分彩
-    8   山东11选5
-    9   江西11选5
-    10  广东11选5
-    11  江苏11选5
-    12  安徽11选5
-    13  山西11选5
-    14  上海11选5
-    15  分分11选5
-    16  江苏快3
-    17  安徽快3
-    18  湖北快3
-    19  河南快3
-    20  江苏骰宝
-    21  分分快3
-    22  北京PK10
-    23  幸运飞艇
-    24  分分PK10
-    25  福彩3D
-    26  排列3
-    27  排列5
-    28  广东快乐十分
-    29  重庆快乐十分
-    30  天津快乐十分
-    31  北京快乐8
-    32  加拿大基诺
-    33  分分快乐彩
-    34  台湾宾果
-    35  北京幸运28
-    36  加拿大幸运28
-    37  台湾幸运28
-    38  香港六合彩
-    39  五分六合彩
-    40  十分六合彩
-    :param data_list:
-    :return:
-    """
+
     ret_list = []
     for data in data_list:
-        number_list = data[1].split(",")
+        if len(data) < 2:
+            continue
 
-        if lotto_id in (1, 2, 3, 4, 5, 6, 7,):  # 0-9
-            if len(number_list) != 5:
-                continue
-            f = 1
-            for num in number_list:
-                n = int(num)
-                if not (0 <= n <= 9):
-                    f = 0
-                    break
-            if not f:
-                continue
+        data[1] = format_number(lotto_id, data[1])
 
-        elif lotto_id in (8,  9, 10, 11, 12, 13, 14, 15,):  # 1-11
-            if len(number_list) != 5:
-                continue
-            f = 1
-            for num in number_list:
-                n = int(num)
-                if not (1 <= n <= 11):
-                    f = 0
-                    break
-            if not f:
-                continue
+        if not data[1]:
+            continue
 
-        elif lotto_id in (16, 17, 18, 19, 20, 21, ):  # 1-6
-            if len(number_list) != 3:
-                continue
-            f = 1
-            for num in number_list:
-                n = int(num)
-                if not (1 <= n <= 6):
-                    f = 0
-                    break
-            if not f:
-                continue
-
-        elif lotto_id in (22, 23, 24, ):  # 1-10
-            if len(number_list) != 10:
-                continue
-            f = 1
-            for num in number_list:
-                n = int(num)
-                if not (1 <= n <= 10):
-                    f = 0
-                    break
-            if not f:
-                continue
-
-        elif lotto_id in (25, 26,):  # 0-9
-            if len(number_list) != 3:
-                continue
-            f = 1
-            for num in number_list:
-                n = int(num)
-                if not (0 <= n <= 9):
-                    f = 0
-                    break
-            if not f:
-                continue
-
-        elif lotto_id in (27,):  # 0-9
-            if len(number_list) != 5:
-                continue
-            f = 1
-            for num in number_list:
-                n = int(num)
-                if not (0 <= n <= 9):
-                    f = 0
-                    break
-            if not f:
-                continue
-
-        elif lotto_id in (28, 29, 30, ):  # 1-20
-            if len(number_list) != 8:
-                continue
-            f = 1
-            for num in number_list:
-                n = int(num)
-                if not (1 <= n <= 20):
-                    f = 0
-                    break
-            if not f:
-                continue
-
-        elif lotto_id in (31, 32, 33, 34, ):  # 1-80
-            if len(number_list) != 20:
-                continue
-            f = 1
-            for num in number_list:
-                n = int(num)
-                if not (1 <= n <= 80):
-                    f = 0
-                    break
-            if not f:
-                continue
-
-        elif lotto_id in (38, 39, 40):  # 1-49
-            if len(number_list) != 7:
-                continue
-            f = 1
-            for num in number_list:
-                n = int(num)
-                if not (1 <= n <= 49):
-                    f = 0
-                    break
-            if not f:
-                continue
         ret_list.append(data)
     return ret_list
 
